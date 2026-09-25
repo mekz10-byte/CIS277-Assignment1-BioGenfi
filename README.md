@@ -44,38 +44,24 @@ Run the compiled program with:
 
 ### 1. Why is a Stack appropriate for managing the free blocks in this memory pool?
 
-A Stack provides a simple way to keep track of available memory blocks.
-When a block is released, it is pushed onto the Stack. The next allocation
-can pop that block from the top of the Stack and reuse it. This follows
-LIFO (Last In, First Out) behavior.
+A Stack makes it easy to store and reuse free blocks using LIFO. A released block is pushed back on top and can be reused by the next allocation.
 
 ### 2. What happens when the free-block Stack becomes empty?
 
-When the Stack is empty, there are no free memory blocks available.
-The allocate() function cannot provide another block, so it returns nullptr.
+There are no more blocks available, so allocate() returns nullptr.
 
 ### 3. Why must a released block be returned to the Stack?
 
-A released block must be returned to the Stack so the memory pool knows
-that the block is available again. This allows a future call to allocate()
-to reuse the block instead of requiring new memory.
+It lets the memory pool know that the block is available to be used again.
 
 ### 4. What problem could occur if the same block were deallocated twice?
 
-If the same block were deallocated twice, the same memory address could
-appear in the free-block Stack more than once. The pool could then give the
-same block to multiple allocations at the same time, which could cause data
-corruption or other invalid memory behavior.
+The same block could be added to the Stack twice and given to two different allocations, which could corrupt data.
 
 ### 5. What is the Big-O time complexity of allocate()? Explain why.
 
-allocate() is O(1). It checks whether the Stack is empty and then pops one
-block from the top of the Stack. These operations take constant time and do
-not depend on the number of blocks in the pool.
+O(1), because it only checks the Stack and pops the top block.
 
 ### 6. What is the Big-O time complexity of deallocate()? Explain why.
 
-deallocate() is O(1). The program validates the pointer using arithmetic and
-array lookups, updates the block's state, and pushes the pointer onto the
-Stack. These operations take constant time and do not require searching
-through all of the blocks.
+O(1), because it validates the block and pushes it back onto the Stack without searching through all the blocks.
